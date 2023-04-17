@@ -22,14 +22,14 @@ i = 0
 while i < 1:
     i+=1
     # Gets our new posts pass if image related subs. Default is memes
-    posts = redditbot.get_posts(keyword)
+    posts = redditbot.get_posts(keyword, 2)
 
     # Create folder if it doesn't exist
     redditbot.create_data_folder()
 
     # Go through posts and find 5 that will work for us.
     for post in posts:
-        redditbot.save_image(post)
+        redditbot.save_post(post)
 
     # Wanted a date in my titles so added this helper
     DAY = date.today().strftime("%d")
