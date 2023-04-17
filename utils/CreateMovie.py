@@ -117,7 +117,7 @@ class CreateMovie():
         title_x, title_y = (video_width - rectangle_width) / 2, (video_height - rectangle_height) / 2
         rectangle_position = (title_x - padding, title_y - padding)
         rect_x, rect_y = rectangle_position
-        rectangle = create_rectangle(width=rectangle_width, height=rectangle_height, color=(240, 240, 240, 4),
+        rectangle = create_rectangle(width=rectangle_width, height=rectangle_height, color=(240, 240, 240),
                                      position=rectangle_position, )
 
         logo_x = title_x - 40
