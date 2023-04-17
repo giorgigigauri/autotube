@@ -6,7 +6,6 @@
 
 ## Setup
 - Clone Project
-- pip install -r requirements.txt
 - python3.10 -m pip install -r requirements.txt
 - python3.10 -m pip install mutagen
 - python3.10 main.py
