@@ -86,5 +86,10 @@ class CreateMovie():
         clip.write_videofile(getUniqId() + "output.mp4", fps=24)
         return 'Done'
 
+    def AddVideoTitleText(self):
+    def AddVideoSubtitleText(self):
+
+    def GetVideoBackgroundVideo(self):
+
 if __name__ == '__main__':
     print(TextClip.list('color'))
