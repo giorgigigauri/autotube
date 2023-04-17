@@ -31,13 +31,6 @@ while i < 1:
     for post in posts:
         redditbot.save_post(post)
 
-
-    # Wanted a date in my titles so added this helper
-    DAY = date.today().strftime("%d")
-    DAY = str(int(DAY)) + GetDaySuffix(int(DAY))
-    dt_string = date.today().strftime("%A %B") + f" {DAY}"
-
-
     for post in redditbot.post_data:
         CreateMovie.CreateMP4(post)
 
