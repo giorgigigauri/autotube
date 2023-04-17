@@ -31,13 +31,15 @@ while i < 1:
     for post in posts:
         redditbot.save_post(post)
 
+
     # Wanted a date in my titles so added this helper
     DAY = date.today().strftime("%d")
     DAY = str(int(DAY)) + GetDaySuffix(int(DAY))
     dt_string = date.today().strftime("%A %B") + f" {DAY}"
 
-    # Create the movie itself!
-    CreateMovie.CreateMP4(redditbot.post_data)
+
+    for post in redditbot.post_data:
+        CreateMovie.CreateMP4(post)
 
     # Video info for YouTube.
     # This example uses the first post title.
@@ -53,6 +55,6 @@ while i < 1:
     if i > 1 :
         print("Posting Video in 5 minutes...")
         time.sleep(60 * 5)
-    upload_video(video_data)
+    # upload_video(video_data)
     # Sleep until ready to post another video!
     #time.sleep(60 * 60 * 24 - 1)

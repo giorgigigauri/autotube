@@ -38,13 +38,13 @@ class RedditBot():
 
         subreddit = self.reddit.subreddit(sub)
         posts = []
-        for submission in subreddit.hot(limit=limit):
+        for submission in subreddit.top(limit=limit):
             if submission.stickied:
                 print("Mod Post")
             else:
                 posts.append(submission)
 
-        print(posts)
+        print('loaded posts',posts)
         return posts
 
     def create_data_folder(self):
