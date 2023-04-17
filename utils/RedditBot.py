@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 import requests
 import json
 from utils.Scalegif import scale_gif
+from PIL import Image
+import io
 
 load_dotenv()
 
@@ -31,16 +33,18 @@ class RedditBot():
             with open(self.posted_already_path, "r") as file:
                 self.already_posted = json.load(file)
 
-    def get_posts(self, sub="memes"):
+    def get_posts(self, sub):
         self.post_data = []
+
         subreddit = self.reddit.subreddit(sub)
         posts = []
-        for submission in subreddit.top("day", limit=100):
+        for submission in subreddit.hot(limit=500):
             if submission.stickied:
                 print("Mod Post")
             else:
                 posts.append(submission)
 
+        print(posts)
         return posts
 
     def create_data_folder(self):
@@ -65,8 +69,22 @@ class RedditBot():
 
                 # Get the image and write the path
                 reqest = requests.get(submission.url.lower())
-                with open(image_path, 'wb') as f:
-                    f.write(reqest.content)
+                imageRGB = Image.open(io.BytesIO(reqest.content))
+                if imageRGB.mode == "P":
+                    # check if transparent
+                    is_transparent = imageRGB.info.get("transparency", False)
+
+                    if is_transparent is False:
+                        # if not transparent, convert indexed image to RGB
+                        imageRGB = imageRGB.convert("RGB")
+                    else:
+                        # convert indexed image to RGBA
+                        imageRGB = imageRGB.convert("RGBA")
+                elif imageRGB.mode == 'PA':
+                    imageRGB = imageRGB.convert("RGBA")
+                imageRGB.save(image_path)
+                #with open(image_path, 'wb') as f:
+                #   f.write(imageRGB.load())
 
                 # Could do transforms on images like resize!
                 #image = cv2.resize(image,(720,1280))
@@ -82,12 +100,15 @@ class RedditBot():
                 for top_level_comment in submission.comments:
                     # Here you can fetch data off the comment.
                     # For the sake of example, we're just printing the comment body.
-                    if len(top_level_comment.body) <= 140 and "http" not in top_level_comment.body:
+                    if len(top_level_comment.body) <= 60 and "http" not in top_level_comment.body:
                         if best_comment is None:
                             best_comment = top_level_comment
                         else:
                             best_comment_2 = top_level_comment
                             break
+
+                if best_comment is None:
+                    return None
 
                 best_comment.reply_sort = "top"
                 best_comment.refresh()

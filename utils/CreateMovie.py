@@ -1,6 +1,9 @@
 from moviepy.editor import *
 import random
 import os
+from gtts import gTTS
+import mutagen
+from mutagen.mp3 import MP3
 
 dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
@@ -61,43 +64,60 @@ class CreateMovie():
         notification_sounds = []
         for i, post in enumerate(post_data):
             return_comment, return_count = add_return_comment(post['Best_comment'])
+            text1 = return_comment
             txt = TextClip(return_comment, font='Courier',
-                        fontsize=38, color=colors.pop(), bg_color='black')
+                        fontsize=40, color=colors.pop(), bg_color='#005BBB')
             txt = txt.on_color(col_opacity=.3)
-            txt = txt.set_position((5,500))
+            txt = txt.set_position((5,50))
             txt = txt.set_start((0, 3 + (i * 12))) # (min, s)
             txt = txt.set_duration(7)
-            txt = txt.crossfadein(0.5)
-            txt = txt.crossfadeout(0.5)
+            txt = txt.crossfadein(0.9)
+            txt = txt.crossfadeout(0.9)
             text_clips.append(txt)
             return_comment, _ = add_return_comment(post['best_reply'])
+            text2 = return_comment
             txt = TextClip(return_comment, font='Courier',
-            fontsize=38, color=colors.pop(), bg_color='black')
+            fontsize=38, color=colors.pop(), bg_color='#005BBB')
             txt = txt.on_color(col_opacity=.3)
-            txt = txt.set_position((15,585 + (return_count * 50)))
+            txt = txt.set_position((15,135 + (return_count * 50)))
             txt = txt.set_start((0, 5 + (i * 12))) # (min, s)
             txt = txt.set_duration(7)
-            txt = txt.crossfadein(0.5)
-            txt = txt.crossfadeout(0.5)
+            txt = txt.crossfadein(0.9)
+            txt = txt.crossfadeout(0.9)
             text_clips.append(txt)
-            notification = AudioFileClip(os.path.join(music_path, f"notification.mp3"))
-            notification = notification.set_start((0, 3 + (i * 12)))
+
+            text1_audio = gTTS(text=text1, lang='en', tld='com.au', slow=False)
+            text1_audio.save("Music/notification1.mp3")
+
+            text2_audio = gTTS(text=text2, lang='en', tld='ie', slow=False)
+            text2_audio.save("Music/notification2.mp3")
+
+
+            text1_audio_length = MP3("Music/notification1.mp3")
+            text1_audio_length = int(text1_audio_length.info.length)
+
+            text2_audio_length = MP3("Music/notification1.mp3")
+            text2_audio_length = int(text2_audio_length.info.length)
+
+            notification = AudioFileClip(os.path.join(music_path, f"notification1.mp3"))
+            notification = notification.set_start((0, 0 + (i * 12)))
             notification_sounds.append(notification)
-            notification = AudioFileClip(os.path.join(music_path, f"notification.mp3"))
-            notification = notification.set_start((0, 5 + (i * 12)))
+            notification = AudioFileClip(os.path.join(music_path, f"notification2.mp3"))
+            notification = notification.set_start((0, (text1_audio_length + 3) + (i * 12)))
             notification_sounds.append(notification)
-        
-        music_file = os.path.join(music_path, f"music{random.randint(0,4)}.mp3")
+
+        music_file = os.path.join(music_path, f"music5.mp3")
         music = AudioFileClip(music_file)
         music = music.set_start((0,0))
-        music = music.volumex(.4)
+        music = music.volumex(.1)
         music = music.set_duration(59)
 
         new_audioclip = CompositeAudioClip([music]+notification_sounds)
         clip.write_videofile(f"video_clips.mp4", fps = 24)
 
         clip = VideoFileClip("video_clips.mp4",audio=False)
-        clip = CompositeVideoClip([clip] + text_clips)
+        #clip = CompositeVideoClip([clip] + text_clips)
+        clip = CompositeVideoClip([clip])
         clip.audio = new_audioclip
         clip.write_videofile("video.mp4", fps = 24)
 
